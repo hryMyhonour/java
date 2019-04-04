@@ -1,0 +1,9 @@
+server:
+  port: 6666
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9999/eureka
+spring:
+  application:
+    name: servicesupplier
