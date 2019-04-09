@@ -5,6 +5,7 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * User Manual available at https://docs.gradle.org/5.2.1/userguide/tutorial_java_projects.html
  */
+apply plugin: 'application'
 
 dependencyManagement {
     imports {
@@ -13,7 +14,10 @@ dependencyManagement {
 }
 
 dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-eureka', version: '1.4.6.RELEASE'
+    compile 'io.github.lognet:grpc-spring-boot-starter:3.2.0'
+    compile project(':grpclib')
 }
 
 mainClassName = 'eureka.servicesupplier.demo.ServiceSupplier'

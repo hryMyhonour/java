@@ -1,9 +1,16 @@
-server:
-  port: 6666
+
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:9999/eureka
+  instance:
+    non-secure-port: ${grpc.port}
 spring:
   application:
     name: servicesupplier
+  main:
+    web-application-type: none
+grpc:
+  port: 6665
+server:
+  port: 4444

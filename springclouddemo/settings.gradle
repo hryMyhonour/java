@@ -11,3 +11,5 @@ rootProject.name = 'springclouddemo'
 include "eurekaregister"
 include "eurekareservicesupplier"
 include "eurekareserviceconsumer"
+include 'grpclib'
+

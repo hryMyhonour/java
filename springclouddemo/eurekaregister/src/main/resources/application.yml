@@ -1,8 +1,59 @@
+spring:
+  profiles:
+    active: dev3
+---
+spring:
+  profiles: dev1
+  application:
+    name: Dev
 server:
   port: 9999
+  address: peek1
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
     service-url:
-      defaultZone: http://localhost:${server.port}/eureka
+      defaultZone: http://peek2:9998/eureka
+  instance:
+    hostname: peek1
+---
+spring:
+  profiles: dev2
+  application:
+    name: Dev
+server:
+  port: 9998
+  address: peek2
+eureka:
+  client:
+    service-url:
+      defaultZone: http://peek1:9999/eureka
+  instance:
+    hostname: peek2
+---
+spring:
+  profiles: dev3
+  application:
+    name: Dev3
+server:
+  port: 9997
+  address: peek3
+eureka:
+  client:
+    service-url:
+      defaultZone: http://peek2:9998/eureka
+  instance:
+    hostname: peek3
+---
+spring:
+  profiles: dev4
+  application:
+    name: Dev4
+server:
+  port: 9996
+  address: peek4
+eureka:
+  client:
+    service-url:
+      defaultZone: http://peek3:9997/eureka,http://peek4:9996/eureka
+  instance:
+    hostname: peek4

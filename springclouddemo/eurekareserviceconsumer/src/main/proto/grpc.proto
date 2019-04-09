@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "grpc.demo";
+
+message EchoRequest {
+    string say = 1;
+}
+message EchoRespond {
+    string back = 1;
+}
+service EchoService{
+    rpc send(EchoRequest) returns (EchoRespond);
+}
