@@ -10,3 +10,5 @@ rootProject.name = 'analyse and demo'
 include 'aqs'
 include 'ioc'
 include 'io'
+include 'threadpool'
+
