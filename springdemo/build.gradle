@@ -51,7 +51,7 @@ allprojects {
         compileOnly("org.projectlombok:lombok")
     }
 
-    group = 'springclouddemo'
+    group = 'springdemo'
     version = '1.0'
     sourceCompatibility = 1.8
     targetCompatibility = 1.8

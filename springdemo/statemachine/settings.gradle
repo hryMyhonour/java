@@ -7,9 +7,4 @@
  * in the user manual at https://docs.gradle.org/5.2.1/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'springclouddemo'
-include "eurekaregister"
-include "eurekareservicesupplier"
-include "eurekareserviceconsumer"
-include 'grpclib'
-
+rootProject.name = 'statemachine'
