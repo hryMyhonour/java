@@ -3,12 +3,35 @@
  */
 package statemachine.demo;
 
-public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.statemachine.StateMachine;
+import statemachine.demo.constants.Event;
+import statemachine.demo.constants.State;
+
+/**
+ * 多种语法糖实现状态机的配置
+ * 持久化状态机的接口
+ * 事件监听
+ */
+@SpringBootApplication
+public class App implements CommandLineRunner {
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        SpringApplication.run(App.class, args);
+    }
+
+    @Autowired
+    private StateMachine<State, Event> stateMachine;
+
+    @Override
+    public void run(String... args) throws Exception {
+        stateMachine.start();
+        stateMachine.sendEvent(Event.ACCEPT);
+        stateMachine.sendEvent(Event.THROW_EXCEPTION);
+        stateMachine.sendEvent(Event.ACCEPT);
+        stateMachine.sendEvent(Event.DONE);
     }
 }
