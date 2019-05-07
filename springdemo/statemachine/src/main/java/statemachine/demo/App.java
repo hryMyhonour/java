@@ -8,6 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.StateMachinePersist;
+import org.springframework.statemachine.persist.StateMachinePersister;
 import statemachine.demo.constants.Event;
 import statemachine.demo.constants.State;
 
@@ -26,12 +28,24 @@ public class App implements CommandLineRunner {
     @Autowired
     private StateMachine<State, Event> stateMachine;
 
+    @Autowired
+    private StateMachinePersister<State, Event, Integer> persister;
+
     @Override
     public void run(String... args) throws Exception {
         stateMachine.start();
+        persister.persist(stateMachine, 1);
+
         stateMachine.sendEvent(Event.ACCEPT);
+        persister.persist(stateMachine, 1);
+
         stateMachine.sendEvent(Event.THROW_EXCEPTION);
+        persister.persist(stateMachine, 1);
+
         stateMachine.sendEvent(Event.ACCEPT);
+        persister.persist(stateMachine, 1);
+
         stateMachine.sendEvent(Event.DONE);
+        persister.persist(stateMachine, 1);
     }
 }

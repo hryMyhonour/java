@@ -1,6 +1,7 @@
 package statemachine.demo;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.Message;
 import org.springframework.statemachine.annotation.OnTransition;
 import org.springframework.statemachine.annotation.WithStateMachine;
 
@@ -19,8 +20,8 @@ public class StateChangeListener {
     }
 
     @OnTransition(target = "EXCEPTION")
-    public void exception() {
-        log.info("throw exception");
+    public void exception(Message message) {
+        log.info(message.getPayload().toString());
     }
 
     @OnTransition(target = "COMPLETE")
