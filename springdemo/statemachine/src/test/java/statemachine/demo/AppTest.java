@@ -4,11 +4,39 @@
 package statemachine.demo;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.concurrent.CountDownLatch;
 
 public class AppTest {
-    @Test public void testAppHasAGreeting() {
-        App classUnderTest = new App();
-        assertNotNull("app should have a greeting", classUnderTest.getGreeting());
+    @Test
+    public void testAppHasAGreeting() throws InterruptedException {
+        Integer i1 = Integer.valueOf(1);
+        Integer i2 = Integer.valueOf(1);
+        CountDownLatch latch = new CountDownLatch(2);
+        new Thread(() -> {
+            synchronized (i1) {
+                System.out.println(Thread.currentThread() + " get i1");
+                try {
+                    Thread.sleep(5000);
+                }catch (Exception e){
+                    System.err.println(e);
+                }
+                System.out.println(Thread.currentThread() + " out");
+                latch.countDown();
+            }
+        }).start();
+        new Thread(() -> {
+            synchronized (i2) {
+                System.out.println(Thread.currentThread() + " get i2");
+                try {
+                    Thread.sleep(5000);
+                }catch (Exception e){
+                    System.err.println(e);
+                }
+                System.out.println(Thread.currentThread() + " out");
+                latch.countDown();
+            }
+        }).start();
+        latch.await();
     }
 }
