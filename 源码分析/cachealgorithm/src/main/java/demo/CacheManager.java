@@ -20,7 +20,7 @@ public class CacheManager {
      * @param cacheObject 缓存
      */
     public void add(CacheObject cacheObject) {
-        if (record.size() > limit) {
+        if (record.size() >= limit) {
             List<CacheObject> e = algorithm.eliminate(record.size() + 1 - limit);
             e.forEach(c -> record.remove(c.key()));
         }
