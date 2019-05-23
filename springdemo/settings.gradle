@@ -13,4 +13,4 @@ include "eurekareservicesupplier"
 include "eurekareserviceconsumer"
 include 'grpclib'
 include 'statemachine'
-
+include 'mybatis'

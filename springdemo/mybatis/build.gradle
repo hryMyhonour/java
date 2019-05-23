@@ -1,0 +1,4 @@
+dependencies {
+    compile "org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1"
+    compile 'mysql:mysql-connector-java'
+}
