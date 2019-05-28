@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    active: 'prod'
+  application:
+    name: tname
+  main:
+    web-application-type: none
+server:
+  servlet:
+    context-parameters:
+      scp: 'scpV'
+logging:
+  level:
+    org.springframework.boot:
+      trace
+app:
+  meta:
+    version: 1
+    sub-version: 1

@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: 'production application 2222'

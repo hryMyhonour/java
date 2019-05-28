@@ -14,3 +14,4 @@ include "eurekareserviceconsumer"
 include 'grpclib'
 include 'statemachine'
 include 'mybatis'
+include 'configuration'
