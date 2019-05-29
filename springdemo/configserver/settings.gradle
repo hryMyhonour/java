@@ -7,13 +7,4 @@
  * in the user manual at https://docs.gradle.org/5.2.1/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'springdemo'
-include "eurekaregister"
-include "eurekareservicesupplier"
-include "eurekareserviceconsumer"
-include 'grpclib'
-include 'statemachine'
-include 'mybatis'
-include 'configuration'
-include 'configserver'
-include 'configclient'
+rootProject.name = 'configserver'

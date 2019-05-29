@@ -1,0 +1,13 @@
+
+server:
+  port: 8888
+  address: 127.0.0.1
+spring:
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: 'file:///G:/gitconfig'
+          add-label-locations: false
+  profiles:
+    active: 'native'

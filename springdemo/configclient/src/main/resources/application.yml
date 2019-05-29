@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    config:
+      name: configclient
+      uri: '127.0.0.1:8888'
+      profile: prod
+server:
+  address: 127.0.0.1
+  port: 8080
+
+client:
+  name: 'Origin'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
