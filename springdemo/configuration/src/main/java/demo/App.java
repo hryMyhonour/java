@@ -10,14 +10,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.config.server.EnableConfigServer;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 @SpringBootApplication
 @Slf4j
 @EnableConfigurationProperties({AppMeta.class})
-@EnableConfigServer
 public class App implements CommandLineRunner {
 
     @Value("${cl.name:undefined}")
@@ -35,9 +34,9 @@ public class App implements CommandLineRunner {
     public static void main(String[] args) {
         //提前定义，但是Test无法执行该段代码
         SpringApplication application = new SpringApplication(App.class);
-        //Properties properties = new Properties();
-        //properties.setProperty("spring.config.location", "file:D:/IDEA/java/springdemo/configuration/app-config/");
-        //application.setDefaultProperties(properties);
+        Properties properties = new Properties();
+        properties.setProperty("spring.config.location", "file:D:/IDEA/java/springdemo/configuration/app-config/");
+        application.setDefaultProperties(properties);
         application.run(args);
     }
 

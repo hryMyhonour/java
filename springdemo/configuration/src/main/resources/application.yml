@@ -1,24 +1,14 @@
-
 spring:
   profiles:
     active: 'prod'
   application:
     name: 'demo application'
-  #main:
-    #web-application-type: none
-  cloud:
-    config:
-      server:
-        git:
-          uri: "file:D:/IDEA/java/springdemo/configuration/app-config/"
-      uri: 'http://localhost:8080'
-      name: configdemo
-
+  main:
+    web-application-type: none
 server:
   servlet:
     context-parameters:
       scp: 'scpV'
-  port: 8080
 logging:
   level:
     org.springframework.boot:

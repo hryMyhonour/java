@@ -1,1 +1,1 @@
-#org.springframework.boot.env.EnvironmentPostProcessor=demo.ConfigConfigurationProcessor
+org.springframework.boot.env.EnvironmentPostProcessor=demo.ConfigConfigurationProcessor

@@ -1,24 +1,19 @@
 apply plugin: 'application'
 
-//configurations {
-//    developmentOnly
-//    runtimeClasspath {
-//        extendsFrom developmentOnly
-//    }
-//    testRuntimeClasspath {
-//        extendsFrom developmentOnly
-//    }
-//}
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+    testRuntimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-starter-jdbc')
-//    compile 'mysql:mysql-connector-java'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-config', version: '2.1.2.RELEASE'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '2.1.2.RELEASE'
-    //    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
-mainClassName = 'demo.App'
+mainClassName='demo.App'
 
 tasks.withType(GroovyCompile) {
     groovyOptions.encoding = "MacRoman"
@@ -29,7 +24,7 @@ tasks.withType(JavaCompile) {
 }
 
 javadoc {
-    options {
+    options{
         encoding "UTF-8"
         charSet 'UTF-8'
         author true

@@ -3,10 +3,8 @@ spring:
     active: 'prod'
   application:
     name: tname
-  datasource:
-    url: 'jdbc:mysql://94hry.tech:3306/test'
-    username: 'test'
-    password: 'test'
+  main:
+    web-application-type: none
 server:
   servlet:
     context-parameters:
