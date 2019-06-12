@@ -9,5 +9,7 @@ spring:
         native:
           search-locations: 'file:///G:/gitconfig'
           add-label-locations: false
+  main:
+    web-application-type: none
   profiles:
     active: 'native'
