@@ -1,0 +1,7 @@
+spring:
+  activemq:
+    broker-url: tcp://94hry.tech:61616
+    user: admin
+    password: qq664390603
+    packages:
+      trust-all: true
