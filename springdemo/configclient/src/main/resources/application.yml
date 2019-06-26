@@ -1,15 +1,16 @@
 spring:
   cloud:
     config:
-      name: configclient
+      name: common
       uri: '127.0.0.1:8888'
       profile: prod
+  kafka:
+    bootstrap-servers: 94hry.tech:9092
+  profiles:
+    active: prod
 server:
   address: 127.0.0.1
   port: 8080
-
-client:
-  name: 'Origin'
 
 management:
   endpoints:

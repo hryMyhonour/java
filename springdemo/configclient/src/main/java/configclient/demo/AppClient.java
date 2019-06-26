@@ -4,20 +4,22 @@
 package configclient.demo;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 @SpringBootApplication
 @Slf4j
+@EnableConfigurationProperties({Config.class})
 public class AppClient implements CommandLineRunner {
 
-    @Value("${client.name:null}")
-    private String name;
+    @Autowired
+    private Config config;
 
     public static void main(String[] args) {
         SpringApplication.run(AppClient.class);
@@ -26,19 +28,12 @@ public class AppClient implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-    }
-}
-
-@RefreshScope
-@RestController
-class MessageRestController {
-
-    @Value("${client.name:null}")
-    private String name;
-
-    @RequestMapping("/message")
-    String getMessage() {
-        return this.name;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                log.info("Config value: {}", config.getTestInfo());
+            }
+        }, 0, 5000);
     }
 }

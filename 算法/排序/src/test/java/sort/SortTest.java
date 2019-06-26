@@ -24,4 +24,13 @@ public class SortTest {
         Arrays.sort(copy);
         assertArrayEquals(source, copy);
     }
+
+    @Test
+    public void testHeapSort() {
+        Integer[] source = new Integer[]{120, -23, 560, 0, 324, 1, 1, 33};
+        Integer[] copy = Arrays.copyOf(source, source.length);
+        HeapSort.sort(source, Integer::compareTo);
+        Arrays.sort(copy);
+        assertArrayEquals(source, copy);
+    }
 }
