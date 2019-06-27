@@ -1,4 +1,4 @@
-package configclient.demo;
+package configserver.demo;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,5 +8,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class Config {
     private String testInfo;
     private String sp;
-    private String local;
 }

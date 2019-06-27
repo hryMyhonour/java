@@ -9,7 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,17 +24,20 @@ public class AppClient implements CommandLineRunner {
     private Config config;
 
     public static void main(String[] args) {
-        SpringApplication.run(AppClient.class);
+        SpringApplication app = new SpringApplication(AppClient.class);
+        ConfigurableApplicationContext context = app.run();
+        Map<String, Object> map = context.getEnvironment().getSystemProperties();
     }
 
 
     @Override
     public void run(String... args) throws Exception {
+
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                log.info("Config value: {}", config.getTestInfo());
+                log.info("Config value: {}", config);
             }
         }, 0, 5000);
     }

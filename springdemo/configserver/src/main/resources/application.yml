@@ -2,19 +2,6 @@ server:
   port: 8888
   address: 127.0.0.1
 spring:
-  cloud:
-    config:
-      server:
-        native:
-          search-locations: file:///D:/IDEA/localconfig
-          order: 1
-        git:
-          uri: https://github.com/huangry999/springconfig.git
-          username: 664390603@qq.com
-          password: qq664390603
-          skip-ssl-validation: true
-          order: 2
-          refresh-rate: 300
   profiles:
     active:
       - native

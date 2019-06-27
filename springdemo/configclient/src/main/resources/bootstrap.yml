@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    config:
+      name: common
+      profile: prod
+      fail-fast: true
+test:
+  test-info: 'app config bs'
+  local: 'app local bs'
