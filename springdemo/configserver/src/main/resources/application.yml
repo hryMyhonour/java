@@ -2,15 +2,14 @@ server:
   port: 8888
   address: 127.0.0.1
 spring:
-  profiles:
-    active:
-      - native
-      - git
   kafka:
     bootstrap-servers: 94hry.tech:9092
     consumer:
       group-id: SpringCloud-Bus
-
+  profiles:
+    active:
+      - native
+      - git
 management:
   endpoints:
     web:
