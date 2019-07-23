@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    zookeeper:
+      connect-string: 94hry.tech:2181
+    discovery:
+      enabled: false
