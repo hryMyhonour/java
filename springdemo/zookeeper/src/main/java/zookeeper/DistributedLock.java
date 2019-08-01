@@ -1,9 +1,11 @@
 package zookeeper;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.WatcherRemoveCuratorFramework;
+import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 
 import java.util.Collections;
@@ -12,23 +14,23 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
+@Slf4j
 public class DistributedLock implements Lock {
 
-    private final CuratorFramework curatorFramework;
+    private final WatcherRemoveCuratorFramework client;
     private final String basePath;
     private String selfPath;
+    private static final String LOCK_NAME = "LOCK";
 
-    private final Watcher watcher = new Watcher() {
-        @Override
-        public void process(WatchedEvent event) {
-            synchronized (this) {
-                notifyAll();
-            }
+    private final Watcher watcher = event -> {
+        log.info("watch event: {}", event.getPath());
+        synchronized (DistributedLock.this) {
+            DistributedLock.this.notifyAll();
         }
     };
 
-    public DistributedLock(CuratorFramework curatorFramework, String basePath) {
-        this.curatorFramework = curatorFramework;
+    public DistributedLock(CuratorFramework client, String basePath) {
+        this.client = client.newWatcherRemoveCuratorFramework();
         this.basePath = basePath;
     }
 
@@ -55,12 +57,14 @@ public class DistributedLock implements Lock {
         //第一次加锁
         if (selfPath == null) {
             try {
-                selfPath = curatorFramework
+                String path = ZKPaths.makePath(basePath, LOCK_NAME);
+                selfPath = client
                         .create()
                         .creatingParentsIfNeeded()
                         .withProtection()
-                        .withMode(CreateMode.EPHEMERAL)
-                        .forPath(basePath);
+                        .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
+                        .forPath(path);
+                log.info("lock self path {}", selfPath);
             } catch (Exception exception) {
                 deleteSelf();
                 throw new RuntimeException(exception);
@@ -69,10 +73,11 @@ public class DistributedLock implements Lock {
         while (true) {
             try {
                 //获取所有的序列结点
-                List<String> children = curatorFramework.getChildren().forPath(basePath);
+                List<String> children = client.getChildren().forPath(basePath);
                 List<String> sortedList = Lists.newArrayList(children);
                 Collections.sort(sortedList);
-                int selfIndex = sortedList.indexOf(selfPath);
+                String selfNode = ZKPaths.getNodeFromPath(selfPath);
+                int selfIndex = sortedList.indexOf(selfNode);
                 if (selfIndex < 0) {
                     throw new IllegalMonitorStateException();
                 }
@@ -83,8 +88,9 @@ public class DistributedLock implements Lock {
                 }
                 //监控前一个结点
                 synchronized (this) {
-                    String previousSequencePath = sortedList.get(selfIndex - 1);
-                    curatorFramework.getData().usingWatcher(watcher).forPath(previousSequencePath);
+                    String previousSequencePath = ZKPaths.makePath(basePath, sortedList.get(selfIndex - 1));
+                    log.info("watch {}", previousSequencePath);
+                    client.getData().usingWatcher(watcher).forPath(previousSequencePath);
                     if (waitTime == 0) {
                         break;
                     } else if (waitTime > 0) {
@@ -97,6 +103,7 @@ public class DistributedLock implements Lock {
                         }
                     } else {
                         wait();
+                        log.info("wake up");
                     }
                 }
             } catch (Exception e) {
@@ -109,7 +116,7 @@ public class DistributedLock implements Lock {
 
     private void deleteSelf() {
         try {
-            curatorFramework.delete().guaranteed().forPath(selfPath);
+            client.delete().guaranteed().forPath(selfPath);
         } catch (Exception e) {
             //ignore
         }
@@ -117,7 +124,8 @@ public class DistributedLock implements Lock {
 
     @Override
     public void unlock() {
-
+        client.removeWatchers();
+        deleteSelf();
     }
 
     @Override

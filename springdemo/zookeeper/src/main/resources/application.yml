@@ -1,3 +1,6 @@
 spring:
   application:
     name: myzookepperapp
+  cloud:
+    zookeeper:
+      connect-string: 94hry.tech:2181

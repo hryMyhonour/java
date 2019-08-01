@@ -25,7 +25,7 @@ allprojects {
     }
 
     ext {
-        set('springCloudVersion', "Greenwich.SR1")
+        set('springCloudVersion', "Greenwich.M3")
     }
 
     dependencyManagement {
