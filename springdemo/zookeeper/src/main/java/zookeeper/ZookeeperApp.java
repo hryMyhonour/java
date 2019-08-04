@@ -36,14 +36,22 @@ public class ZookeeperApp implements CommandLineRunner {
         client.start();
         DistributedLock lock1 = new DistributedLock(client, "/lock");
         DistributedLock lock2 = new DistributedLock(client, "/lock");
+        DistributedLock lock3 = new DistributedLock(client, "/lock");
         new Thread(() -> {
             try {
                 log.info("lock 1 try get lock");
                 lock1.lock();
                 log.info("lock 1 get lock");
-                Thread.sleep(5000);
+                Thread.sleep(2000);
+                log.info("lock 1.2 try get lock");
+                lock1.lock();
+                log.info("lock 1.2 get lock");
+                Thread.sleep(2000);
                 lock1.unlock();
                 log.info("lock 1 release lock");
+                Thread.sleep(1000);
+                lock1.unlock();
+                log.info("lock 1.2 release lock");
             } catch (Exception e) {
                 //ignore
             }
@@ -54,9 +62,28 @@ public class ZookeeperApp implements CommandLineRunner {
                 log.info("lock 2 try get lock");
                 lock2.lock();
                 log.info("lock 2 get lock");
-                Thread.sleep(5000);
+                Thread.sleep(1000);
+                log.info("lock 2.2 try get lock");
+                lock2.lock();
+                log.info("lock 2.2 get lock");
+                Thread.sleep(1000);
                 lock2.unlock();
                 log.info("lock 2 release lock");
+                lock2.unlock();
+                log.info("lock 2.2 release lock");
+            } catch (Exception e) {
+                //ignore
+            }
+        }).start();
+        Thread.sleep(500);
+        new Thread(() -> {
+            try {
+                log.info("lock 3 try get lock");
+                lock3.lock();
+                log.info("lock 3 get lock");
+                Thread.sleep(5000);
+                lock3.unlock();
+                log.info("lock 3 release lock");
             } catch (Exception e) {
                 //ignore
             }

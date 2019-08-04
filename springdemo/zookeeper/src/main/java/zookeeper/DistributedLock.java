@@ -3,7 +3,6 @@ package zookeeper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.WatcherRemoveCuratorFramework;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.Watcher;
@@ -17,10 +16,19 @@ import java.util.concurrent.locks.Lock;
 @Slf4j
 public class DistributedLock implements Lock {
 
-    private final WatcherRemoveCuratorFramework client;
+    private final CuratorFramework client;
     private final String basePath;
     private String selfPath;
     private static final String LOCK_NAME = "LOCK";
+    private final ThreadLocal<ThreadContext> threadLocal = new ThreadLocal<>();
+
+    private static class ThreadContext {
+        private int lockCount;
+
+        public ThreadContext(int lockCount) {
+            this.lockCount = lockCount;
+        }
+    }
 
     private final Watcher watcher = event -> {
         log.info("watch event: {}", event.getPath());
@@ -30,7 +38,7 @@ public class DistributedLock implements Lock {
     };
 
     public DistributedLock(CuratorFramework client, String basePath) {
-        this.client = client.newWatcherRemoveCuratorFramework();
+        this.client = client;
         this.basePath = basePath;
     }
 
@@ -51,32 +59,38 @@ public class DistributedLock implements Lock {
 
     @Override
     public boolean tryLock(long time, TimeUnit unit) {
+        //当前线程正在持有锁
+        ThreadContext threadContext = threadLocal.get();
+        if (threadContext != null) {
+            threadContext.lockCount++;
+            return true;
+        }
+        //等待时间的处理
         long startTime = System.currentTimeMillis();
         long waitTime = unit.toMillis(time);
         boolean getLock = false;
-        //第一次加锁
-        if (selfPath == null) {
-            try {
-                String path = ZKPaths.makePath(basePath, LOCK_NAME);
-                selfPath = client
-                        .create()
-                        .creatingParentsIfNeeded()
-                        .withProtection()
-                        .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-                        .forPath(path);
-                log.info("lock self path {}", selfPath);
-            } catch (Exception exception) {
-                deleteSelf();
-                throw new RuntimeException(exception);
-            }
+        //生成候选人结点
+        try {
+            String path = ZKPaths.makePath(basePath, LOCK_NAME);
+            selfPath = client
+                    .create()
+                    .creatingParentsIfNeeded()
+                    .withProtection()
+                    .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
+                    .forPath(path);
+            log.info("lock self path {}", selfPath);
+        } catch (Exception exception) {
+            deleteSelf();
+            throw new RuntimeException(exception);
         }
         while (true) {
             try {
-                //获取所有的序列结点
+                //获取所有的候选人结点
                 List<String> children = client.getChildren().forPath(basePath);
                 List<String> sortedList = Lists.newArrayList(children);
                 Collections.sort(sortedList);
                 String selfNode = ZKPaths.getNodeFromPath(selfPath);
+                //获取当前候选人所在的位置
                 int selfIndex = sortedList.indexOf(selfNode);
                 if (selfIndex < 0) {
                     throw new IllegalMonitorStateException();
@@ -86,7 +100,7 @@ public class DistributedLock implements Lock {
                     getLock = true;
                     break;
                 }
-                //监控前一个结点
+                //监控前一个结点，当前一个结点释放锁时，当前候选人获取锁
                 synchronized (this) {
                     String previousSequencePath = ZKPaths.makePath(basePath, sortedList.get(selfIndex - 1));
                     log.info("watch {}", previousSequencePath);
@@ -111,6 +125,10 @@ public class DistributedLock implements Lock {
                 throw new RuntimeException(e);
             }
         }
+        //记录线程获取锁的上下文
+        if (getLock) {
+            threadLocal.set(new ThreadContext(1));
+        }
         return getLock;
     }
 
@@ -124,8 +142,16 @@ public class DistributedLock implements Lock {
 
     @Override
     public void unlock() {
-        client.removeWatchers();
-        deleteSelf();
+        ThreadContext context = threadLocal.get();
+        if (context == null) {
+            throw new IllegalMonitorStateException("Thread not have lock");
+        }
+        if (context.lockCount == 1) {
+            deleteSelf();
+            threadLocal.set(null);
+        } else {
+            context.lockCount--;
+        }
     }
 
     @Override
